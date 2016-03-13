@@ -5,3 +5,9 @@ class Atom:
     def reset(self,val):
         self.value = val
         return val
+
+    def tostring(self):
+        return "(atom "+str(self.value)+")"
+
+def atomp(v):
+    return isinstance(v,Atom)

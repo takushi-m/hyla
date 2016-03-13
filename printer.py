@@ -1,5 +1,5 @@
 import types
-from type import Atom
+import type
 
 def pr_str(mal_data, print_readably=True):
     res = []
@@ -14,8 +14,8 @@ def pr_str(mal_data, print_readably=True):
         if print_readably:
             mal_data = mal_data.replace("\\n","\n").replace("\\\"","\"").replace("\\\\","\\")
         return mal_data
-    elif isinstance(mal_data,Atom):
-        return "(atom "+str(mal_data.value)+")"
+    elif type.atomp(mal_data):
+        return mal_data.tostring()
     elif not isinstance(mal_data, list):
         return str(mal_data)
 

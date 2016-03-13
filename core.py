@@ -1,7 +1,7 @@
 import printer
 import reader
 import re
-from type import Atom
+import type
 
 def malstring2pythonstring(s):
     a = re.search(r"\"((?:\\.|[^\"])*)\"", s)
@@ -73,8 +73,8 @@ ns = {
     ,"slurp": lambda fname:"\""+readfile(fname)+"\""
     ,"str": lambda *x: "\""+"".join([malstring2pythonstring(printer.pr_str(v,False)) for v in x])+"\""
     ,"prn": prn
-    ,"atom": lambda v:Atom(v)
-    ,"atom?": lambda a:isinstance(a,Atom)
+    ,"atom": lambda v:type.Atom(v)
+    ,"atom?": type.atomp
     ,"deref": lambda a:a.value
     ,"reset!": lambda a,v:a.reset(v)
     ,"swap!": lambda a,f,*arg:a.reset(f(a.value,*arg) if not isinstance(f,dict) else f["fn"](a.value,*arg))
