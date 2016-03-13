@@ -9,6 +9,9 @@ import core
 from env import Env
 
 DEBUG = False
+def log(msg,label="",debug=False):
+    if debug or DEBUG:
+        print("["+label+"] "+msg)
 
 def is_pair(lst):
     return isinstance(lst,list) and len(lst)>0
@@ -52,16 +55,14 @@ def eval_ast(ast,env):
 
 def READ(line):
     res = reader.read_str(line)
-    if DEBUG:
-        print("READ: "+str(res))
+    log(str(res),"READ")
     return res
 
 def EVAL(ast, env):
     if ast=="":
         return ""
     while True:
-        if DEBUG:
-            print("EVAL: "+str(ast))
+        log(str(ast),"EVAL")
 
         ast = macroexpand(ast,env)
         if not isinstance(ast,list):
@@ -73,8 +74,7 @@ def EVAL(ast, env):
             return v
         elif f=="let*":
             bindings = ast[1]
-            if DEBUG:
-                print("bindings: "+str(bindings))
+            log(str(bindings),"bindings")
             if len(bindings)%2!=0:
                 raise
 
@@ -104,8 +104,10 @@ def EVAL(ast, env):
             # (fn* (x y) (+ x y))
             binds = ast[1]
             body = ast[2]
-            if DEBUG:
-                print("function| binds: "+str(binds)+". body: "+str(body))
+
+            log(str(binds),"function.binds")
+            log(str(body),"function.body")
+
             fn = lambda *param:EVAL(body,Env(env,binds,param))
             return {
                 "ast": body
@@ -148,8 +150,7 @@ def EVAL(ast, env):
 
 def PRINT(line):
     res = printer.pr_str(line)
-    if DEBUG:
-        print("PRINT: "+str(res))
+    log(str(res),"PRINT")
     return res
 
 def rep(line):
@@ -160,6 +161,9 @@ def rep(line):
 
 
 if __name__ == '__main__':
+    if len(sys.argv)>1 and sys.argv[1]=="-v":
+        DEBUG = True
+
     repl_env = Env()
     for k,v in core.ns.items():
         repl_env.set(k,v)
