@@ -1,4 +1,5 @@
 import re
+import maltype
 
 class Reader:
     def __init__(self,tokens):
@@ -61,5 +62,7 @@ def read_atom(reader):
         return True
     elif tk=="false":
         return False
+    elif tk[0]=="\"":
+        return maltype.String(tk[1:len(tk)-1])
     else:
         return tk

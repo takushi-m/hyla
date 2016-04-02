@@ -1,14 +1,10 @@
 import printer
 import reader
 import re
-import type
-
-def malstring2pythonstring(s):
-    a = re.search(r"\"((?:\\.|[^\"])*)\"", s)
-    return a.group(1)
+import maltype
 
 def readfile(name):
-    name = malstring2pythonstring(name)
+    name = name.value
     ret = "";
     with open(name,"r") as f:
         ret = f.read()
@@ -41,6 +37,10 @@ def prn(*x):
     print(" ".join([printer.pr_str(v,True) for v in x]))
     return "nil"
 
+def println(*x):
+    print(" ".join([printer.pr_str(v,False) for v in x]))
+    return "nil"
+
 def apply(f,*lst):
     arg = []
     for l in lst:
@@ -69,12 +69,14 @@ ns = {
     ,"<": lambda x,y: x<y
     ,">=": lambda x,y: x>=y
     ,"<=": lambda x,y: x<=y
-    ,"read-string": lambda s: reader.read_str(malstring2pythonstring(s))
-    ,"slurp": lambda fname:"\""+readfile(fname)+"\""
-    ,"str": lambda *x: "\""+"".join([malstring2pythonstring(printer.pr_str(v,False)) for v in x])+"\""
+    ,"read-string": lambda s: reader.read_str(s.value)
+    ,"slurp": lambda fname:maltype.String(readfile(fname))
+    ,"pr-str": lambda *x: maltype.String(" ".join([printer.pr_str(v) for v in x]))
+    ,"str": lambda *x: maltype.String("".join([printer.pr_str(v,False) for v in x]))
     ,"prn": prn
-    ,"atom": lambda v:type.Atom(v)
-    ,"atom?": type.atomp
+    ,"println": println
+    ,"atom": lambda v:maltype.Atom(v)
+    ,"atom?": maltype.atomp
     ,"deref": lambda a:a.value
     ,"reset!": lambda a,v:a.reset(v)
     ,"swap!": lambda a,f,*arg:a.reset(f(a.value,*arg) if not isinstance(f,dict) else f["fn"](a.value,*arg))
@@ -90,5 +92,5 @@ ns = {
     ,"true?": lambda b:isinstance(b,bool) and b
     ,"false?": lambda b:isinstance(b,bool) and not b
     ,"symbol?": lambda s:isinstance(s,str) and s!="nil" and re.search("^[^\s\[\]{}('\"`,;)]*$",s)!=None
-    ,"symbol": malstring2pythonstring
+    ,"symbol": lambda x:x.value
 }

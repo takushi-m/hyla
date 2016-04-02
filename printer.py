@@ -1,5 +1,5 @@
 import types
-import type
+import maltype
 
 def pr_str(mal_data, print_readably=True):
     res = []
@@ -10,12 +10,10 @@ def pr_str(mal_data, print_readably=True):
             return "true"
         else:
             return "false"
-    elif isinstance(mal_data,str):
-        if print_readably:
-            mal_data = mal_data.replace("\\n","\n").replace("\\\"","\"").replace("\\\\","\\")
-        return mal_data
-    elif type.atomp(mal_data):
+    elif maltype.atomp(mal_data):
         return mal_data.tostring()
+    elif maltype.stringp(mal_data):
+        return mal_data.tostring(print_readably)
     elif not isinstance(mal_data, list):
         return str(mal_data)
 
